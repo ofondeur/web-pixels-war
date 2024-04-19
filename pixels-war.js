@@ -5,12 +5,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const PREFIX = `${PIXEL_URL}/api/v1/${MAP_ID}`
 
-    fetch(`${PREFIX}/preinit`, {credentials: "include"})
+    fetch(`${PREFIX}/preinit`, { credentials: "include" })
         .then((response) => response.json())
         .then((json) => {
             console.log(json)
-            //TODO: maintenant que j'ai le json de preinit, je peux initialiser ma grille
 
+            //TODO: maintenant que j'ai le json de preinit, je peux initialiser ma grille
+            fetch(`${PREFIX}/init?key=${json.key}`, { credentials: "include" })
+                .then((response) => response.json())
+                .then((json) => {
+                    const grid = document.getElementById("grid")
+                    for (let y = 0; y < json.ny; y++) {
+                        for (let x = 0; x < json.nx; x++) {
+                            const pixel = document.createElement("div")
+                            pixel.classList.add("pixel")
+                            pixel.style.backgroundColor = `rgb(${json.data[y][x][0]}, ${json.data[y][x][1]}, ${json.data[y][x][2]})`
+                            pixel.addEventListener("mouseover", () => {
+                                console.log(`x: ${x}, y: ${y}`)
+                            })
+                            grid.appendChild(pixel)
+                        }
+                    }
+                })
             //TODO: maintenant que j'ai le JSON, afficher la grille, et récupérer l'id
 
             //TODO: maintenant que j'ai l'id, attacher la fonction refresh(id), à compléter, au clic du bouton refresh
@@ -39,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // À compléter puis à attacher au bouton refresh en passant mon id une fois récupéré
     function refresh(user_id) {
-        fetch(`${PREFIX}/deltas?id=${user_id}`, {credentials: "include"})
+        fetch(`${PREFIX}/deltas?id=${user_id}`, { credentials: "include" })
             .then((response) => response.json())
             .then((json) => {
                 //TODO: maintenant que j'ai le json des deltas, mettre à jour les pixels qui ont changé.
