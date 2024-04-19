@@ -9,8 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((response) => response.json())
         .then((json) => {
             console.log(json)
-
-            //TODO: maintenant que j'ai le json de preinit, je peux initialiser ma grille
             fetch(`${PREFIX}/init?key=${json.key}`, { credentials: "include" })
                 .then((response) => response.json())
                 .then((json) => {
@@ -27,42 +25,34 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     }
                 })
-            //TODO: maintenant que j'ai le JSON, afficher la grille, et récupérer l'id
-
-            //TODO: maintenant que j'ai l'id, attacher la fonction refresh(id), à compléter, au clic du bouton refresh
-
-            //TODO: attacher au clic de chaque pixel une fonction qui demande au serveur de colorer le pixel sous là forme :
-            // http://pixels-war.oie-lab.net/api/v1/0000/set/id/x/y/r/g/b
-            // la fonction getPickedColorInRGB ci-dessous peut aider
-
-            //TODO: pourquoi pas rafraichir la grille toutes les 3 sec ?
-            // voire même rafraichir la grille après avoir cliqué sur un pixel ?
-
-            // cosmétique / commodité / bonus:
-
-            // TODO: pour être efficace, il serait utile d'afficher quelque part
-            // les coordonnées du pixel survolé par la souris
-
-            //TODO: pour les rapides: afficher quelque part combien de temps
-            // il faut attendre avant de pouvoir poster à nouveau
-
-            //TODO: pour les avancés: ça pourrait être utile de pouvoir
-            // choisir la couleur à partir d'un pixel ?
-
         })
+    //TODO: maintenant que j'ai le JSON, afficher la grille, et récupérer l'id
 
-    //TODO: pour les élèves avancés, comment transformer les "then" ci-dessus en "async / await" ?
+    //TODO: maintenant que j'ai l'id, attacher la fonction refresh(id), à compléter, au clic du bouton refresh
+
+    //TODO: attacher au clic de chaque pixel une fonction qui demande au serveur de colorer le pixel sous là forme :
+    // http://pixels-war.oie-lab.net/api/v1/0000/set/id/x/y/r/g/b
+    // la fonction getPickedColorInRGB ci-dessous peut aider
+
+    //TODO: pourquoi pas rafraichir la grille toutes les 3 sec ?
+    // voire même rafraichir la grille après avoir cliqué sur un pixel ?
+
+    // cosmétique / commodité / bonus:`
+
 
     // À compléter puis à attacher au bouton refresh en passant mon id une fois récupéré
     function refresh(user_id) {
         fetch(`${PREFIX}/deltas?id=${user_id}`, { credentials: "include" })
             .then((response) => response.json())
             .then((json) => {
-                //TODO: maintenant que j'ai le json des deltas, mettre à jour les pixels qui ont changé.
-                // "Here be dragons" : comment récupérer le bon div ?
-
+                for (let delta of json.deltas) {
+                    const [y, x, r, g, b] = delta
+                    const pixel = document.querySelector(`.pixel:nth-child(${y * json.nx + x + 1})`)
+                    pixel.style.backgroundColor = `rgb(${r}, ${g}, ${b})`
+                }
             })
     }
+
 
     // Petite fonction facilitatrice pour récupérer la couleur cliquée en RGB
     function getPickedColorInRGB() {
